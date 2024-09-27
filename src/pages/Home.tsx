@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import SearchComp from '../components/SearchComp';
 import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { fetchFail, fetchStart, getSuccessProduct } from '../features/productsSlice';
-import { EventFunc, Products } from '../types';
+import { addFavorites, fetchFail, fetchStart, getSuccessProduct } from '../features/productsSlice';
+import { EventFunc, Product, Products } from '../types';
+import Card from '../components/Card';
 
 const Home = () => {
   const [search, setSearch] = useState('');
   const dispatch = useAppDispatch();
-  const { loading, error, productsList } = useAppSelector((state) => state.products);
+  const { loading, error, productsList,favorites } = useAppSelector((state) => state.products);
 
   const getData = async () => {
     dispatch(fetchStart());
@@ -29,24 +30,30 @@ const Home = () => {
     setSearch(e.target.value);
   };
 
+  const handleAdd = (product:Product) => {
+    if(favorites.filter((item) => item.id === product.id).length === 0){
+      dispatch(addFavorites(product))
+    }
+
+  }
+
   return (
     <div>
       <SearchComp handleChange={handleChange} />
 
       {loading ? (
-        error ? (
-          <div className='text-red-500'>
-            <p>Something went wrong</p>
+          <div className='mt-52'>
+             <p className='text-red-500'>Products loading...</p>
           </div>
-        ) : (
-          <div className='text-red-600'>
-            <p>Products loading...</p>
+        ) : error ? (
+          <div className='mt-52'>
+           <p className='text-red-500'>Something went wrong</p>
           </div>
-        )
+        
       ) : (
-        <div>
+        <div className='flex justify-center items-center flex-wrap gap-5 p-5'>
           {productsList.map((item) => (
-            <p key={item.id}>{item.title}</p>
+            <Card key={item.id} text={"Add to Favorites"} item={item} handleFunc={handleAdd}/>
           ))}
         </div>
       )}
