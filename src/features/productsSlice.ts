@@ -37,8 +37,11 @@ export const productsSlice = createSlice({
     addFavorites(state,action:PayloadAction<Product>){
         state.favorites = [...state.favorites, action.payload]
     },
-    removeFvorites (state,action: PayloadAction<Product[]>){
+    removeFavorites (state,action: PayloadAction<Product[]>){
         state.favorites = action.payload
+    },
+    getSuccessCategories (state, action: PayloadAction<string[]>){
+      state.categories = action.payload
     },
     fetchFail(state){
         state.loading=false;
@@ -47,6 +50,6 @@ export const productsSlice = createSlice({
   },
 });
 
-export const {fetchFail,fetchStart,addFavorites,removeFvorites,getSuccessProduct} = productsSlice.actions;
+export const {fetchFail,fetchStart,addFavorites,removeFavorites,getSuccessProduct,getSuccessCategories} = productsSlice.actions;
 
 export const productsReducer= productsSlice.reducer;

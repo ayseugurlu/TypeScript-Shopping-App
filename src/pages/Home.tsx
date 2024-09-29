@@ -1,29 +1,22 @@
 import { useEffect, useState } from 'react';
 import SearchComp from '../components/SearchComp';
-import axios from 'axios';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { addFavorites, fetchFail, fetchStart, getSuccessProduct } from '../features/productsSlice';
-import { EventFunc, Product, Products } from '../types';
+import { addFavorites } from '../features/productsSlice';
+import { EventFunc, Product } from '../types';
 import Card from '../components/Card';
+import useProductCall from '../hooks/useProductCall';
 
 const Home = () => {
   const [search, setSearch] = useState('');
   const dispatch = useAppDispatch();
   const { loading, error, productsList,favorites } = useAppSelector((state) => state.products);
 
-  const getData = async () => {
-    dispatch(fetchStart());
-    try {
-      const { data } = await axios.get<Products>(`https://dummyjson.com/products/search?q=${search}`);
-      console.log(data.products);
-      dispatch(getSuccessProduct(data.products));
-    } catch (error) {
-      dispatch(fetchFail());
-    }
-  };
+  const {getData, getCategories} =useProductCall()
+ 
 
   useEffect(() => {
-    getData();
+    getData(search);
+    getCategories()
   }, [search]);
 
   const handleChange: EventFunc = (e) => {
